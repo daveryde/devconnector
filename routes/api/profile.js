@@ -31,8 +31,8 @@ router.get(
   (req, res) => {
     const errors = {};
 
-    Profile.findOne({ user: req.user.id })
-      .populate('user', ['name', 'avatar'])
+    Profile.findOne({ user: req.user._id })
+      .populate('users', ['name', 'avatar'])
       .then(profile => {
         if (!profile) {
           errors.noprofile = 'There is no profile for this user';
@@ -51,7 +51,7 @@ router.get('/all', (req, res) => {
   const errors = {};
 
   Profile.find()
-    .populate('user', ['name', 'avatar'])
+    .populate('users', ['name', 'avatar'])
     .then(profiles => {
       if (!profiles) {
         errors.noprofile = 'There are no profiles';
@@ -100,7 +100,7 @@ router.get('/user/:user_id', (req, res) => {
 
       res.json(profile);
     })
-    .catch(err => res.status(404).json(err));
+    .catch(err => res.status(404).json({ oops: 'Something went wrong' }));
 });
 
 // @route   POST api/profile/
@@ -143,11 +143,11 @@ router.post(
     if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
     if (req.body.instagram) profileFields.social.instagram = req.body.instagram;
 
-    Profile.findOne({ user: req.user.id }).then(profile => {
+    Profile.findOne({ user: req.user._id }).then(profile => {
       if (profile) {
         // Update
         Profile.findOneAndUpdate(
-          { user: req.user.id },
+          { user: req.user._id },
           { $set: profileFields },
           { new: true }
         ).then(profile => res.json(profile));
@@ -185,7 +185,7 @@ router.post(
       // Return any erros with 400 status
       return res.status(400).json(errors);
     }
-    Profile.findOne({ user: req.user.id }).then(profile => {
+    Profile.findOne({ user: req.user._id }).then(profile => {
       const newExp = {
         title: req.body.title,
         company: req.body.company,
@@ -218,7 +218,7 @@ router.post(
       // Return any erros with 400 status
       return res.status(400).json(errors);
     }
-    Profile.findOne({ user: req.user.id }).then(profile => {
+    Profile.findOne({ user: req.user._id }).then(profile => {
       const newEdu = {
         school: req.body.school,
         degree: req.body.degree,
@@ -246,7 +246,7 @@ router.delete(
   (req, res) => {
     const { errors, isValid } = validateEducationInput(req.body);
 
-    Profile.findOne({ user: req.user.id })
+    Profile.findOne({ user: req.user._id })
       .then(profile => {
         // Get remove index
         const removeIndex = profile.experience
@@ -272,7 +272,7 @@ router.delete(
   (req, res) => {
     const { errors, isValid } = validateEducationInput(req.body);
 
-    Profile.findOne({ user: req.user.id })
+    Profile.findOne({ user: req.user._id })
       .then(profile => {
         // Get remove index
         const removeIndex = profile.education
@@ -296,7 +296,7 @@ router.delete(
   '/',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Profile.findOneAndRemove({ user: req.user.id }).then(() => {
+    Profile.findOneAndRemove({ user: req.user._id }).then(() => {
       User.findOneAndRemove({ _id: req.user.id }).then(() =>
         res.json({ success: true })
       );

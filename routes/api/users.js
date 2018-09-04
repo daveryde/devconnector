@@ -10,21 +10,17 @@ const passport = require('passport');
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
 
-// Load User Model
+// Load User model
 const User = require('../../models/User');
 
 // @route   GET api/users/test
 // @desc    Tests users route
-// @access  Pubilc
-router.get('/test', (req, res) => {
-  res.json({
-    msg: 'Users Works'
-  });
-});
+// @access  Public
+router.get('/test', (req, res) => res.json({ msg: 'Users Works' }));
 
 // @route   GET api/users/register
 // @desc    Register user
-// @access  Pubilc
+// @access  Public
 router.post('/register', (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
 
@@ -67,7 +63,7 @@ router.post('/register', (req, res) => {
 
 // @route   GET api/users/login
 // @desc    Login User / Returning JWT Token
-// @access  Pubilc
+// @access  Public
 router.post('/login', (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
 
@@ -91,10 +87,9 @@ router.post('/login', (req, res) => {
     bcrypt.compare(password, user.password).then(isMatch => {
       if (isMatch) {
         // User Matched
-
         const payload = { id: user.id, name: user.name, avatar: user.avatar }; // Create JWT Payload
 
-        //Sign Token
+        // Sign Token
         jwt.sign(
           payload,
           keys.secretOrKey,
@@ -108,7 +103,7 @@ router.post('/login', (req, res) => {
         );
       } else {
         errors.password = 'Password incorrect';
-        return res.status(400).json({ password: 'Password incorrect' });
+        return res.status(400).json(errors);
       }
     });
   });
@@ -117,7 +112,6 @@ router.post('/login', (req, res) => {
 // @route   GET api/users/current
 // @desc    Return current user
 // @access  Private
-
 router.get(
   '/current',
   passport.authenticate('jwt', { session: false }),
