@@ -129,11 +129,11 @@ class AddEducation extends Component {
                   </label>
                 </div>
                 <TextAreaFieldGroup
-                  placeholder="Job Description"
-                  name="description"
-                  value={this.state.description}
+                  placeholder="Field Of Study"
+                  name="fieldofstudy"
+                  value={this.state.fieldofstudy}
                   onChange={this.onChange}
-                  error={errors.description}
+                  error={errors.fieldofstudy}
                   info="Tell us about the program that you were in"
                 />
                 <input
