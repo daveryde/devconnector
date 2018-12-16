@@ -244,8 +244,6 @@ router.delete(
   '/experience/:exp_id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateEducationInput(req.body);
-
     Profile.findOne({ user: req.user._id })
       .then(profile => {
         // Get remove index
@@ -270,8 +268,6 @@ router.delete(
   '/education/:edu_id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateEducationInput(req.body);
-
     Profile.findOne({ user: req.user._id })
       .then(profile => {
         // Get remove index
